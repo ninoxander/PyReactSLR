@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import ThemeToggleButton from "./ThemeToggleButton";
 import { Line } from "react-chartjs-2";
 import {
 Chart as ChartJS,
@@ -101,60 +102,63 @@ if (file && file.type === "application/json") {
 
 return (
 <div
-    className="min-h-screen bg-gray-100 flex items-center justify-center p-6"
+    className="min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-6 relative"
     onDragOver={(e) => e.preventDefault()}
     onDrop={handleFileDrop}
 >
-    <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-    <h1 className="text-2xl font-bold mb-4 text-center">
+    <div className="absolute top-4 right-4">
+    <ThemeToggleButton />
+    </div>
+    <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-8 max-w-md w-full">
+    <h1 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
         Regresión Lineal Simple
     </h1>
     <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-        <label className="block font-medium">
+        <label className="block font-medium text-gray-900 dark:text-gray-100">
             Valores de X (separados por comas):
         </label>
         <input
             type="text"
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             value={xValues}
             onChange={(e) => setXValues(e.target.value)}
         />
         </div>
         <div>
-        <label className="block font-medium">
+        <label className="block font-medium text-gray-900 dark:text-gray-100">
             Valores de Y (separados por comas):
         </label>
         <input
             type="text"
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             value={yValues}
             onChange={(e) => setYValues(e.target.value)}
         />
         </div>
         <div>
-        <label className="block font-medium">
+        <label className="block font-medium text-gray-900 dark:text-gray-100">
             Valor de X para predecir (opcional):
         </label>
         <input
             type="text"
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             value={predictX}
             onChange={(e) => setPredictX(e.target.value)}
         />
         </div>
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
         O arrastra un archivo JSON con el formato correcto.
         </p>
         <button
         type="submit"
-        className="w-full bg-blue-500 text-white font-bold py-2 rounded-lg hover:bg-blue-600"
+        className="w-full bg-pink-700 dark:bg-pink-700 text-white font-bold py-2 rounded-lg hover:bg-blue-600 dark:hover:bg-pink-800"
         >
         Calcular
         </button>
     </form>
     {chartData && (
-        <div className="mt-6 bg-gray-800 p-4 rounded-lg">
+        <div className="mt-6 bg-gray-800 dark:bg-gray-900 p-4 rounded-lg">
         <Line
             data={chartData}
             options={{
@@ -196,8 +200,8 @@ return (
     )}
     {error && <p className="text-red-500 mt-4">{error}</p>}
     {results && (
-        <div className="mt-6 p-4 bg-green-100 rounded-lg">
-        <h2 className="font-bold">Resultados:</h2>
+        <div className="mt-6 p-4 bg-green-100 dark:bg-green-900 rounded-lg">
+        <h2 className="font-bold text-gray-900 dark:text-gray-100">Resultados:</h2>
         <p>Intercepto (β₀): {results.coefficients.beta_0.toFixed(4)}</p>
         <p>Pendiente (β₁): {results.coefficients.beta_1.toFixed(4)}</p>
         <p>R²: {results.metrics.r2.toFixed(4)}</p>
