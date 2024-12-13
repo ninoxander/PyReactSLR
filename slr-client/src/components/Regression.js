@@ -30,6 +30,44 @@ const [predictX, setPredictX] = useState("");
 const [results, setResults] = useState(null);
 const [chartData, setChartData] = useState(null);
 const [error, setError] = useState("");
+const [dragging, setDragging] = useState(false);
+
+const handleDragOver = (e) => {
+e.preventDefault();
+if (!dragging) setDragging(true);
+};
+
+const handleDragLeave = (e) => {
+e.preventDefault();
+if (dragging) setDragging(false);
+};
+
+const handleFileDrop = (e) => {
+e.preventDefault();
+setDragging(false);
+const file = e.dataTransfer.files[0];
+if (file && file.type === "application/json") {
+    const reader = new FileReader();
+    reader.onload = () => {
+    try {
+        const jsonData = JSON.parse(reader.result);
+        if (jsonData.x && jsonData.y && Array.isArray(jsonData.x) && Array.isArray(jsonData.y)) {
+        setXValues(jsonData.x.join(","));
+        setYValues(jsonData.y.join(","));
+        setPredictX(jsonData.predict_x || "");
+        setError("");
+        } else {
+        setError("El archivo JSON no tiene el formato esperado.");
+        }
+    } catch (error) {
+        setError("Error al leer el archivo JSON.");
+    }
+    };
+    reader.readAsText(file);
+} else {
+    setError("Por favor, sube un archivo JSON válido.");
+}
+};
 
 const handleSubmit = async (e) => {
 e.preventDefault();
@@ -74,38 +112,18 @@ try {
 }
 };
 
-const handleFileDrop = (e) => {
-e.preventDefault();
-const file = e.dataTransfer.files[0];
-if (file && file.type === "application/json") {
-    const reader = new FileReader();
-    reader.onload = () => {
-    try {
-        const jsonData = JSON.parse(reader.result);
-        if (jsonData.x && jsonData.y && Array.isArray(jsonData.x) && Array.isArray(jsonData.y)) {
-        setXValues(jsonData.x.join(","));
-        setYValues(jsonData.y.join(","));
-        setPredictX(jsonData.predict_x || "");
-        setError("");
-        } else {
-        setError("El archivo JSON no tiene el formato esperado.");
-        }
-    } catch (error) {
-        setError("Error al leer el archivo JSON.");
-    }
-    };
-    reader.readAsText(file);
-} else {
-    setError("Por favor, sube un archivo JSON válido.");
-}
-};
-
 return (
 <div
     className="min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-6 relative"
-    onDragOver={(e) => e.preventDefault()}
+    onDragOver={handleDragOver}
+    onDragLeave={handleDragLeave}
     onDrop={handleFileDrop}
 >
+    {dragging && (
+    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <p className="text-white text-2xl font-bold">Suelta tu archivo aquí</p>
+    </div>
+    )}
     <div className="absolute top-4 right-4">
     <ThemeToggleButton />
     </div>
