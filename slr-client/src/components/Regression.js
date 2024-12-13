@@ -73,8 +73,38 @@ try {
 }
 };
 
+const handleFileDrop = (e) => {
+e.preventDefault();
+const file = e.dataTransfer.files[0];
+if (file && file.type === "application/json") {
+    const reader = new FileReader();
+    reader.onload = () => {
+    try {
+        const jsonData = JSON.parse(reader.result);
+        if (jsonData.x && jsonData.y && Array.isArray(jsonData.x) && Array.isArray(jsonData.y)) {
+        setXValues(jsonData.x.join(","));
+        setYValues(jsonData.y.join(","));
+        setPredictX(jsonData.predict_x || "");
+        setError("");
+        } else {
+        setError("El archivo JSON no tiene el formato esperado.");
+        }
+    } catch (error) {
+        setError("Error al leer el archivo JSON.");
+    }
+    };
+    reader.readAsText(file);
+} else {
+    setError("Por favor, sube un archivo JSON válido.");
+}
+};
+
 return (
-<div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+<div
+    className="min-h-screen bg-gray-100 flex items-center justify-center p-6"
+    onDragOver={(e) => e.preventDefault()}
+    onDrop={handleFileDrop}
+>
     <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
     <h1 className="text-2xl font-bold mb-4 text-center">
         Regresión Lineal Simple
@@ -113,6 +143,9 @@ return (
             onChange={(e) => setPredictX(e.target.value)}
         />
         </div>
+        <p className="text-sm text-gray-500 text-center">
+        O arrastra un archivo JSON con el formato correcto.
+        </p>
         <button
         type="submit"
         className="w-full bg-blue-500 text-white font-bold py-2 rounded-lg hover:bg-blue-600"
